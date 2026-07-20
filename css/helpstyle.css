@@ -1,0 +1,142 @@
+/* =======================================================
+   WaterPort
+   Help System
+   ======================================================= */
+
+/* =======================================================
+   Botón de ayuda
+   ======================================================= */
+
+#help-container {
+
+    position: absolute;
+
+    left: 20px;
+    top: 260px;
+
+    width: 50px;
+    height: 50px;
+
+    z-index: 9999;
+}
+
+#help-button {
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 50px;
+    height: 50px;
+
+    margin: 0;
+    padding: 0;
+
+    border: none;
+    outline: none;
+
+    background: transparent;
+    background-image: url("../assets/help_button.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+
+    appearance: none;
+    -webkit-appearance: none;
+
+    cursor: pointer;
+
+    z-index: 2;
+}
+
+#help-button:hover,
+#help-button:focus,
+#help-button:active {
+
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
+
+/* =======================================================
+   Tooltip
+   ======================================================= */
+
+#help-tooltip {
+
+    position: absolute;
+
+    left: 60px;
+    top: 10px;
+
+    padding: 8px 12px;
+
+    background: transparent;
+    border: none;
+
+    color: #000;
+
+    font-size: 16px;
+    font-weight: bold;
+
+    white-space: nowrap;
+
+    opacity: 0;
+    visibility: hidden;
+
+    pointer-events: none;
+
+    transition: opacity .15s ease;
+
+    z-index: 1;
+}
+
+#help-container:hover #help-tooltip {
+
+    opacity: 1;
+    visibility: visible;
+}
+
+/* =======================================================
+   Ventana de ayuda
+   ======================================================= */
+
+#help-window {
+
+    display: none;
+
+    position: fixed;
+
+    left: 50%;
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+
+width: 1800px;
+height: 1300px;
+
+max-width: none;
+max-height: none;
+
+    background: transparent;
+    background-image: url("../assets/backgrounds/papiro_help.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+
+    border: none;
+    outline: none;
+    box-shadow: none;
+
+    z-index: 999999;
+}
+
+/* =======================================================
+   Ventana visible
+   ======================================================= */
+
+#help-window.visible {
+
+    display: block;
+}
