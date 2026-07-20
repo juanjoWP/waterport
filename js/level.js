@@ -26,3 +26,17 @@ function nextLevel() {
   document.getElementById("message").textContent =
     `NIVEL ${currentLevel}: LLENA LOS 5 DEPÓSITOS`;
 }
+function completeLevel() {
+  if (levelCompleted) return;
+
+  levelCompleted = true;
+
+  SoundManager.playLevelComplete();
+
+  document.getElementById("message").textContent =
+    `NIVEL ${currentLevel} COMPLETADO`;
+
+  setTimeout(() => {
+    nextLevel();
+  }, 1800);
+}

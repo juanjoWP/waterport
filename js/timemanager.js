@@ -5,8 +5,8 @@
 
 const TimeManager = {
 
-levelDuration: 120,
-remainingTime: 120,
+    levelDuration: 120,
+    remainingTime: 120,
     totalElapsedTime: 0,
     intervalId: null,
 
@@ -16,6 +16,13 @@ remainingTime: 120,
 
         this.remainingTime = this.levelDuration;
         this.updateUI();
+
+        this.resume();
+    },
+
+    resume() {
+
+        if (this.intervalId !== null) return;
 
         this.intervalId = setInterval(() => {
 
@@ -78,11 +85,12 @@ remainingTime: 120,
     handleTimeUp() {
 
         GameState.set(GameState.GAME_OVER);
+
         setTimeout(() => {
 
-    GameState.set(GameState.WAITING_RESTART);
+            GameState.set(GameState.WAITING_RESTART);
 
-}, 1500);
+        }, 1500);
 
         PopupManager.show(
             "TIEMPO AGOTADO",

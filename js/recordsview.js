@@ -129,40 +129,43 @@ const RecordsView = {
 
     open() {
 
-        if (!this.overlayElement) return;
+    if (!this.overlayElement) return;
 
-        this.previousState =
-            GameState.current;
+    this.previousState =
+        GameState.current;
 
-        GameState.set(
-            GameState.ENTERING_RECORD
-        );
+    GameState.set(
+        GameState.ENTERING_RECORD
+    );
 
-        this.hideDeleteConfirmation();
-        this.render();
+    PauseManager.pause();
+    TimeManager.stop();
 
-        this.overlayElement.classList.add(
-            "records-window-visible"
-        );
-    },
+    this.hideDeleteConfirmation();
+    this.render();
+
+    this.overlayElement.classList.add(
+        "records-window-visible"
+    );
+},
 
 
-    close() {
+close() {
 
-        if (!this.overlayElement) return;
+    if (!this.overlayElement) return;
 
-        this.hideDeleteConfirmation();
+    this.hideDeleteConfirmation();
 
-        this.overlayElement.classList.remove(
-            "records-window-visible"
-        );
-
-        GameState.set(
-            this.previousState ||
-            GameState.PLAYING
-        );
-    },
-
+    this.overlayElement.classList.remove(
+        "records-window-visible"
+    );
+PauseManager.resume();
+TimeManager.resume();
+    GameState.set(
+        this.previousState ||
+        GameState.PLAYING
+    );
+},
 
     showDeleteConfirmation() {
 

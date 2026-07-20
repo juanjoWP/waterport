@@ -272,9 +272,9 @@ function completeLevel() {
 
     TimeManager.stop();
 
-    document.getElementById("message").textContent =
-        `NIVEL ${LevelManager.currentLevel} COMPLETADO`;
+    SoundManager.playLevelComplete();
 
+    document.getElementById("message").textContent =
     PopupManager.levelCompleted();
 
     setTimeout(() => {
@@ -304,6 +304,8 @@ function completeLevel() {
 function finishGame() {
 
     TimeManager.stop();
+
+    SoundManager.playGameComplete();
 
     const finalScore =
         ScoreManager.get();
