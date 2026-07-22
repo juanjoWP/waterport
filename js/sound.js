@@ -5,10 +5,6 @@
 
 const SoundManager = {
 
-    levelCompleteSound: new Audio(
-        "assets/sounds/glu.mp3"
-    ),
-
     gameCompleteSound: new Audio(
         "assets/sounds/clap.mp3"
     ),
