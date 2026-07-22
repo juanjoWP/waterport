@@ -17,13 +17,18 @@ function updateWaterFlow() {
 
   for (let row = 0; row < WATERPORT_CONFIG.board.rows; row++) {
 
-    const firstTile = boardTiles[row][0];
+  const firstTile = boardTiles[row][0];
 
-    if (firstTile && firstTile.hasConnection("W")) {
-      stack.push(firstTile);
-    }
-
+  if (
+    firstTile &&
+    !firstTile.volcano &&
+    !firstTile.burned &&
+    firstTile.hasConnection("W")
+  ) {
+    stack.push(firstTile);
   }
+
+}
 
   while (stack.length > 0) {
 

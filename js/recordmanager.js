@@ -230,6 +230,21 @@ const RecordManager = {
                 0,
                 this.maximumTimeRecords
             );
+    },
+
+
+    // ===================================================
+    // BORRAR TODOS LOS RÉCORDS
+    // ===================================================
+
+    clearRecords() {
+
+        this.records = {
+            scores: [],
+            times: []
+        };
+
+        this.save();
     }
 
 };

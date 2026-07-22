@@ -1,0 +1,24 @@
+/* =======================================================
+   WaterPort 1.1
+   Casilla volcán
+   ======================================================= */
+
+.volcano-tile {
+  position: relative;
+}
+
+.volcano-tile::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background-image:
+    url("../assets/tiles/vulcan.png");
+
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+
+  pointer-events: none;
+  z-index: 10;
+}

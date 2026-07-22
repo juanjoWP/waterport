@@ -47,70 +47,145 @@ class Tile {
 
     this.rotation = 0;
     this.visualRotation = 0;
-    this.blocked = false;
-this.frozen = false;
-this.reward = null;
-this.clock = null;
-this.multiplier = null;
 
-    this.neighbors = { N: null, E: null, S: null, W: null };
+    this.blocked = false;
+    this.frozen = false;
+
+    this.volcano = false;
+    this.burned = false;
+
+    this.reward = null;
+    this.clock = null;
+    this.multiplier = null;
+
+    this.neighbors = {
+      N: null,
+      E: null,
+      S: null,
+      W: null
+    };
 
     this.element = null;
     this.pipeElement = null;
   }
 
   createElement() {
-    this.element = document.createElement("div");
+    this.element =
+      document.createElement("div");
+
     this.element.className = "tile";
     this.element.dataset.row = this.row;
     this.element.dataset.col = this.col;
 
-    this.pipeElement = document.createElement("div");
-    this.pipeElement.className = `pipe ${this.type}`;
+    this.pipeElement =
+      document.createElement("div");
 
-    this.element.appendChild(this.pipeElement);
+    this.pipeElement.className =
+      `pipe ${this.type}`;
 
-    this.element.addEventListener("click", () => {
-      this.rotateRight();
+    this.element.appendChild(
+      this.pipeElement
+    );
 
-      document.dispatchEvent(new CustomEvent("tileRotated", {
-        detail: { tile: this }
-      }));
-    });
+    this.element.addEventListener(
+      "click",
+      () => {
+        this.rotateRight();
+
+        document.dispatchEvent(
+          new CustomEvent(
+            "tileRotated",
+            {
+              detail: {
+                tile: this
+              }
+            }
+          )
+        );
+      }
+    );
 
     this.updateVisual();
+
     return this.element;
   }
 
   rotateRight() {
-    if (!GameState.is(GameState.PLAYING)) {
-    return;
-}
-  if (this.locked || this.blocked || this.frozen) return;
+    if (
+      !GameState.is(
+        GameState.PLAYING
+      )
+    ) {
+      return;
+    }
 
-  this.rotation = (this.rotation + 1) % 4;
-  this.visualRotation += 90;
-  this.updateVisual();
-}
+    if (
+      this.locked ||
+      this.blocked ||
+      this.frozen ||
+      this.volcano ||
+      this.burned
+    ) {
+      return;
+    }
+
+    this.rotation =
+      (this.rotation + 1) % 4;
+
+    this.visualRotation += 90;
+
+    this.updateVisual();
+  }
 
   getConnections() {
-    return PIPE_CONNECTIONS[this.type][this.rotation];
+    return PIPE_CONNECTIONS[
+      this.type
+    ][
+      this.rotation
+    ];
   }
 
   hasConnection(direction) {
-    return this.getConnections().includes(direction);
+    return this
+      .getConnections()
+      .includes(direction);
   }
 
-  canConnectTo(direction) {
-    const neighbor = this.neighbors[direction];
-    if (!neighbor) return false;
-
-    const opposite = OPPOSITE_DIRECTION[direction];
-
-    return this.hasConnection(direction) && neighbor.hasConnection(opposite);
+canConnectTo(direction) {
+  if (
+    this.volcano ||
+    this.burned
+  ) {
+    return false;
   }
+
+  const neighbor =
+    this.neighbors[direction];
+
+  if (!neighbor) {
+    return false;
+  }
+
+  if (
+    neighbor.volcano ||
+    neighbor.burned
+  ) {
+    return false;
+  }
+
+  const opposite =
+    OPPOSITE_DIRECTION[
+      direction
+    ];
+
+  return (
+    this.hasConnection(direction) &&
+    neighbor.hasConnection(opposite)
+  );
+}
 
   updateVisual() {
-    this.pipeElement.style.transform = `rotate(${this.visualRotation}deg)`;
+    this.pipeElement.style.transform =
+      `rotate(${this.visualRotation}deg)`;
   }
 }

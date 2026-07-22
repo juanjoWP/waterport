@@ -18,6 +18,7 @@ const LEVELS = [
     {
         blocked: [0, 0],
         frozen: [0, 0],
+        volcano: [1, 1],
         rewards: [100],
         clocks: [],
         multipliers: []
@@ -89,7 +90,7 @@ const LEVELS = [
     // Nivel 10
     {
         blocked: [1, 2],
-        frozen: [0, 0],
+        frozen: [0, 1],
         rewards: [100, 200, 300],
         clocks: [60],
         multipliers: [2]
@@ -125,7 +126,7 @@ const LEVELS = [
     // Nivel 14
     {
         blocked: [1, 3],
-        frozen: [0, 0],
+        frozen: [0, 1],
         rewards: [100, 100, 200, 300],
         clocks: [30, 60],
         multipliers: [2, 3]
@@ -134,7 +135,7 @@ const LEVELS = [
     // Nivel 15
     {
         blocked: [2, 3],
-        frozen: [0, 0],
+        frozen: [0, 1],
         rewards: [100, 100, 200, 300],
         clocks: [30, 60],
         multipliers: [2, 3]
@@ -179,7 +180,8 @@ const LEVELS = [
     // Nivel 20
     {
         blocked: [3, 3],
-        frozen: [1, 1],
+        frozen: [0, 0],
+        volcano: [1, 1],
         rewards: [100, 100, 200, 300, 500, 1000],
         clocks: [60, 90],
         multipliers: [2, 3]
@@ -195,9 +197,16 @@ const LevelManager = {
         return this.currentLevel;
     },
 
-    getCurrentLevelData() {
-        return LEVELS[this.currentLevel - 1];
-    },
+getCurrentLevelData() {
+
+    const levelIndex =
+        Math.min(
+            this.currentLevel - 1,
+            LEVELS.length - 1
+        );
+
+    return LEVELS[levelIndex];
+},
 
     getRandomBlockedCount() {
         const levelData = this.getCurrentLevelData();
@@ -267,26 +276,23 @@ const LevelManager = {
 // =======================================================
 // CAMBIO Y FINAL DE NIVEL
 // =======================================================
-
+let levelTransitionInProgress = false;
 function completeLevel() {
+
+    if (levelTransitionInProgress) return;
+
+    levelTransitionInProgress = true;
 
     TimeManager.stop();
 
     SoundManager.playLevelComplete();
 
     document.getElementById("message").textContent =
-    PopupManager.levelCompleted();
+        PopupManager.levelCompleted();
 
     setTimeout(() => {
 
         LevelManager.currentLevel++;
-
-        if (LevelManager.currentLevel > LEVELS.length) {
-
-            finishGame();
-            return;
-
-        }
 
         document.getElementById("level").textContent =
             LevelManager.currentLevel;
@@ -295,6 +301,8 @@ function completeLevel() {
 
         document.getElementById("message").textContent =
             `NIVEL ${LevelManager.currentLevel}: LLENA LOS 5 DEPÓSITOS`;
+
+        levelTransitionInProgress = false;
 
     }, 1000);
 

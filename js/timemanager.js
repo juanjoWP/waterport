@@ -15,8 +15,8 @@ const TimeManager = {
         this.stop();
 
         this.remainingTime = this.levelDuration;
-        this.updateUI();
 
+        this.updateUI();
         this.resume();
     },
 
@@ -84,19 +84,69 @@ const TimeManager = {
 
     handleTimeUp() {
 
-        GameState.set(GameState.GAME_OVER);
+        this.stop();
 
-        setTimeout(() => {
+        GameState.set(
+            GameState.GAME_OVER
+        );
 
-            GameState.set(GameState.WAITING_RESTART);
+        const finalScore =
+            ScoreManager.get();
 
-        }, 1500);
+        const finalTime =
+            this.getTotalElapsedTime();
+
+        const entersScoreRecords =
+            RecordManager.isHighScore(
+                finalScore,
+                finalTime
+            );
+
+        const entersTimeRecords =
+            RecordManager.isBestTime(
+                finalScore,
+                finalTime,
+                true
+            );
 
         PopupManager.show(
             "TIEMPO AGOTADO",
             "level",
             1500
         );
+
+        setTimeout(() => {
+
+            if (
+                entersScoreRecords ||
+                entersTimeRecords
+            ) {
+
+                SoundManager.playGameComplete();
+
+                RecordEntry.open(
+                    finalScore,
+                    finalTime,
+                    true
+                );
+
+                return;
+            }
+
+            GameState.set(
+                GameState.WAITING_RESTART
+            );
+
+            const messageElement =
+                document.getElementById("message");
+
+            if (messageElement) {
+
+                messageElement.textContent =
+                    "TIEMPO AGOTADO · CLIC PARA EMPEZAR";
+            }
+
+        }, 1500);
     },
 
     updateUI() {
@@ -121,7 +171,7 @@ const TimeManager = {
 };
 
 
-// Cada tablero nuevo inicia su cuenta atrás.
+// Cada tablero nuevo inicia una cuenta atrás de 2 minutos.
 document.addEventListener(
     "boardCreated",
     () => TimeManager.startLevel()

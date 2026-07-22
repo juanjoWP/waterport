@@ -475,18 +475,24 @@ body {
 }
 
 .frozen-tile {
+  position: relative;
   cursor: not-allowed;
+}
 
-  outline: 7px solid #bdefff;
-  outline-offset: -7px;
+.frozen-tile::after {
+  content: "";
 
-  background:
-    linear-gradient(
-      rgba(190, 240, 255, 0.55),
-      rgba(90, 175, 225, 0.55)
-    );
+  position: absolute;
+  inset: 0;
 
-  filter: brightness(1.15);
+  background-image:
+    url("../assets/tiles/tile_hielo.png");
+
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+
+  pointer-events: none;
 }
 
 /* =======================================================

@@ -10,6 +10,7 @@ function createBoard() {
 
   const blockedAmount = getRandomBlockedCount();
   const frozenAmount = getRandomFrozenCount();
+  const volcanoAmount = getRandomVolcanoCount();
   const rewards = getRandomRewards();
   const clock = getRandomClock();
   const multiplier = getRandomMultiplier();
@@ -24,6 +25,13 @@ function createBoard() {
   applyFrozenTiles(
     levelData,
     frozenAmount,
+    rows,
+    cols
+  );
+
+  applyVolcanoTiles(
+    levelData,
+    volcanoAmount,
     rows,
     cols
   );
@@ -74,6 +82,9 @@ function createBoard() {
       tile.frozen =
         tileData.frozen || false;
 
+      tile.volcano =
+        tileData.volcano || false;
+
       tile.reward =
         tileData.reward || null;
 
@@ -99,6 +110,12 @@ function createBoard() {
           "frozen-tile"
         );
       }
+
+if (tile.volcano) {
+  tileElement.classList.add(
+    "volcano-tile"
+  );
+}
 
       if (tile.reward !== null) {
         addRewardMarker(
@@ -282,6 +299,77 @@ function applyFrozenTiles(
 
 
 // =======================================================
+// CASILLA VOLCÁN
+// =======================================================
+
+function getRandomVolcanoCount() {
+  const currentLevel =
+    getCurrentLevelData();
+
+  if (!currentLevel.volcano) {
+    return 0;
+  }
+
+  const minimum =
+    currentLevel.volcano[0];
+
+  const maximum =
+    currentLevel.volcano[1];
+
+  return Math.floor(
+    Math.random() *
+    (maximum - minimum + 1)
+  ) + minimum;
+}
+
+
+function applyVolcanoTiles(
+  levelData,
+  amount,
+  rows,
+  cols
+) {
+  if (amount <= 0) return;
+
+  const candidates = [];
+  const allowedColumns = [0, 1, 2];
+
+  for (let row = 0; row < rows; row++) {
+    allowedColumns.forEach(col => {
+      if (col >= cols) return;
+
+      const tileData =
+        levelData[row][col];
+
+      if (
+        !tileData.blocked &&
+        !tileData.frozen &&
+        !tileData.volcano
+      ) {
+        candidates.push(tileData);
+      }
+    });
+  }
+
+  shuffleArray(candidates);
+
+  const selectedAmount =
+    Math.min(
+      amount,
+      candidates.length
+    );
+
+  for (
+    let index = 0;
+    index < selectedAmount;
+    index++
+  ) {
+    candidates[index].volcano = true;
+  }
+}
+
+
+// =======================================================
 // PREMIOS
 // =======================================================
 
@@ -298,7 +386,10 @@ function applyRewards(
       const tileData =
         levelData[row][col];
 
-      if (!tileData.frozen) {
+      if (
+        !tileData.frozen &&
+        !tileData.volcano
+      ) {
         candidates.push(tileData);
       }
     }
@@ -363,6 +454,7 @@ function applyClock(
 
       if (
         !tileData.frozen &&
+        !tileData.volcano &&
         tileData.reward == null &&
         tileData.clock == null &&
         tileData.multiplier == null
@@ -420,6 +512,7 @@ function applyMultiplier(
 
       if (
         !tileData.frozen &&
+        !tileData.volcano &&
         tileData.reward == null &&
         tileData.clock == null &&
         tileData.multiplier == null
