@@ -110,7 +110,6 @@
   -webkit-text-fill-color: transparent;
 
   text-shadow:
-  text-shadow:
     0 0 20px red,
     0 0 40px red,
     0 0 60px red;
@@ -134,7 +133,7 @@
   align-items: center;
   justify-content: center;
 
-  background: rgba(0,0,0,.72);
+  background: rgba(0, 0, 0, 0.72);
 
 }
 
@@ -154,13 +153,13 @@
 
   font-family: Arial, Helvetica, sans-serif;
 
-  background: rgba(25,25,25,.96);
+  background: rgba(25, 25, 25, 0.96);
 
   border: 4px solid #ffe27a;
   border-radius: 18px;
 
   box-shadow:
-    0 16px 45px rgba(0,0,0,.75);
+    0 16px 45px rgba(0, 0, 0, 0.75);
 
 }
 
@@ -215,7 +214,7 @@
 #record-initials:focus {
 
   box-shadow:
-    0 0 18px rgba(123,220,255,.95);
+    0 0 18px rgba(123, 220, 255, 0.95);
 
 }
 
@@ -261,7 +260,7 @@
   align-items: center;
   justify-content: center;
 
-  background: rgba(0,0,0,.72);
+  background: rgba(0, 0, 0, 0.72);
 
 }
 
@@ -273,9 +272,12 @@
 
 .records-panel {
 
-  width: 780px;
+  box-sizing: border-box;
 
-  padding: 32px 42px;
+  width: 900px;
+  height: 800px;
+
+  padding: 115px 90px 55px;
 
   font-family: Arial, Helvetica, sans-serif;
 
@@ -283,33 +285,47 @@
 
   color: white;
 
-  background: rgba(22,22,22,.97);
+  background-image:
+    url("../assets/backgrounds/marco_record.png");
 
-  border: 4px solid #ffe27a;
-  border-radius: 18px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 900px 800px;
 
-  box-shadow:
-    0 18px 50px rgba(0,0,0,.78);
+  border: none;
+  border-radius: 0;
+
+  box-shadow: none;
 
 }
+
+
+/* El título RÉCORDS ya está dibujado en el marco */
 
 .records-panel h2 {
 
-  margin: 0 0 24px;
-
-  color: #ffe27a;
-
-  font-size: 46px;
+  display: none;
 
 }
 
+
 .records-panel h3 {
 
-  margin: 18px 0 12px;
+  margin: 0 0 14px;
 
   color: #7bdcff;
 
   font-size: 24px;
+
+}
+
+/* =======================================================
+   Filas de récords
+======================================================= */
+
+#score-records-list {
+
+  width: 100%;
 
 }
 
@@ -318,16 +334,20 @@
   display: grid;
 
   grid-template-columns:
-    70px
-    90px
-    1fr
-    150px;
+    58px
+    82px
+    minmax(250px, 1fr)
+    235px;
+
+  column-gap: 12px;
 
   align-items: center;
 
-  min-height: 48px;
+  min-height: 50px;
 
-  padding: 4px 12px;
+  padding: 4px 10px;
+
+  box-sizing: border-box;
 
   font-size: 21px;
 
@@ -345,9 +365,25 @@
 }
 
 .record-position,
+.record-initials,
+.record-main,
+.record-secondary {
+
+  white-space: nowrap;
+
+}
+
+.record-position,
 .record-initials {
 
   font-weight: bold;
+
+}
+
+.record-position,
+.record-initials {
+
+  text-align: center;
 
 }
 
@@ -391,7 +427,7 @@
 
 
 /* =======================================================
-   Borrar récords
+   Botones de la ventana
 ======================================================= */
 
 .records-buttons {
@@ -399,46 +435,241 @@
   display: flex;
 
   justify-content: center;
+  align-items: center;
 
-  gap: 18px;
+  gap: 14px;
 
-  margin-top: 26px;
+  margin-top: 24px;
 
 }
 
 #records-close-button,
-#records-delete-button {
+#records-delete-button,
+#records-finish-button {
 
-  width: 220px;
   height: 58px;
 
   margin: 0;
+  padding: 0 20px;
 
   border: none;
   border-radius: 12px;
 
   font-family: Arial, Helvetica, sans-serif;
 
-  font-size: 21px;
+  font-size: 19px;
   font-weight: bold;
+
+  white-space: nowrap;
 
   cursor: pointer;
 
 }
 
+#records-delete-button {
+
+  width: 170px;
+
+  background: #ba3c3c;
+  color: white;
+
+}
+
+#records-finish-button {
+
+  width: 260px;
+
+  background: #e4872e;
+  color: white;
+
+}
+
 #records-close-button {
+
+  width: 170px;
 
   background: #ffe27a;
   color: #202020;
 
 }
 
-#records-delete-button {
+
+/* =======================================================
+   Confirmación para borrar récords
+======================================================= */
+
+#records-confirmation {
+
+  display: none;
+
+  margin-top: 24px;
+  padding: 18px;
+
+  background: rgba(0, 0, 0, 0.45);
+
+  border: 3px solid #ff8585;
+  border-radius: 12px;
+
+}
+
+#records-confirmation.records-confirmation-visible {
+
+  display: block;
+
+}
+
+#records-confirmation p {
+
+  margin: 0 0 16px;
+
+  color: white;
+
+  font-family: Arial, Helvetica, sans-serif;
+
+  font-size: 22px;
+  font-weight: bold;
+
+}
+
+.records-confirmation-buttons {
+
+  display: flex;
+
+  justify-content: center;
+
+  gap: 18px;
+
+}
+
+#records-confirm-no,
+#records-confirm-yes {
+
+  width: 130px;
+  height: 48px;
+
+  border: none;
+  border-radius: 10px;
+
+  font-family: Arial, Helvetica, sans-serif;
+
+  font-size: 20px;
+  font-weight: bold;
+
+  cursor: pointer;
+
+}
+
+#records-confirm-no {
+
+  background: #d4d4d4;
+  color: #202020;
+
+}
+
+#records-confirm-yes {
 
   background: #ba3c3c;
   color: white;
 
 }
+
+
+/* =======================================================
+   Confirmación para terminar la partida
+======================================================= */
+
+#finish-game-confirmation {
+
+  display: none;
+
+  margin-top: 24px;
+  padding: 18px;
+
+  background: rgba(0, 0, 0, 0.45);
+
+  border: 3px solid #f0a04b;
+  border-radius: 12px;
+
+}
+
+#finish-game-confirmation.finish-game-confirmation-visible {
+
+  display: block;
+
+}
+
+#finish-game-confirmation p {
+
+  margin: 0 0 10px;
+
+  color: white;
+
+  font-family: Arial, Helvetica, sans-serif;
+
+  font-size: 22px;
+  font-weight: bold;
+
+}
+
+#finish-game-confirmation span {
+
+  display: block;
+
+  margin-bottom: 18px;
+
+  color: #dddddd;
+
+  font-family: Arial, Helvetica, sans-serif;
+
+  font-size: 17px;
+
+}
+
+.finish-game-confirmation-buttons {
+
+  display: flex;
+
+  justify-content: center;
+
+  gap: 18px;
+
+}
+
+#finish-game-confirm-no,
+#finish-game-confirm-yes {
+
+  width: 130px;
+  height: 48px;
+
+  border: none;
+  border-radius: 10px;
+
+  font-family: Arial, Helvetica, sans-serif;
+
+  font-size: 20px;
+  font-weight: bold;
+
+  cursor: pointer;
+
+}
+
+#finish-game-confirm-no {
+
+  background: #d4d4d4;
+  color: #202020;
+
+}
+
+#finish-game-confirm-yes {
+
+  background: #e4872e;
+  color: white;
+
+}
+
+/* =======================================================
+   Confirmación para borrar récords
+======================================================= */
 
 #records-confirmation {
 
@@ -448,10 +679,9 @@
 
   padding: 18px;
 
-  background: rgba(0,0,0,.45);
+  background: rgba(0, 0, 0, 0.45);
 
   border: 3px solid #ff8585;
-
   border-radius: 12px;
 
 }

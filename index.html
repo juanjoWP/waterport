@@ -108,57 +108,83 @@
 
     </section>
 
-    <!-- Ventana de récords -->
+<!-- Ventana de récords -->
 
-    <section id="records-window">
+<section id="records-window">
 
-      <div class="records-panel">
+  <div class="records-panel">
 
-        <h2>RÉCORDS</h2>
+    <h2>RÉCORDS</h2>
 
-        <h3>MEJORES PUNTUACIONES</h3>
+    <h3>MEJORES PUNTUACIONES</h3>
 
-        <div id="score-records-list"></div>
+    <div id="score-records-list"></div>
 
-        <div class="records-separator"></div>
+    <div id="time-records-list" hidden></div>
 
-        <h3>MEJORES TIEMPOS</h3>
+    <div class="records-buttons">
 
-        <div id="time-records-list"></div>
+      <button id="records-delete-button">
+        BORRAR
+      </button>
 
-        <div class="records-buttons">
+      <button id="records-finish-button">
+        TERMINAR PARTIDA
+      </button>
 
-          <button id="records-delete-button">
-            BORRAR 
-          </button>
+      <button id="records-close-button">
+        CERRAR
+      </button>
 
-          <button id="records-close-button">
-            CERRAR
-          </button>
+    </div>
 
-        </div>
+    <!-- Confirmación para borrar los récords -->
 
-        <div id="records-confirmation">
+    <div id="records-confirmation">
 
-          <p>¿BORRAR TODOS LOS RÉCORDS?</p>
+      <p>¿BORRAR TODOS LOS RÉCORDS?</p>
 
-          <div class="records-confirmation-buttons">
+      <div class="records-confirmation-buttons">
 
-            <button id="records-confirm-no">
-              NO
-            </button>
+        <button id="records-confirm-no">
+          NO
+        </button>
 
-            <button id="records-confirm-yes">
-              SÍ
-            </button>
-
-          </div>
-
-        </div>
+        <button id="records-confirm-yes">
+          SÍ
+        </button>
 
       </div>
 
-    </section>
+    </div>
+
+    <!-- Confirmación para terminar la partida -->
+
+    <div id="finish-game-confirmation">
+
+      <p>¿TERMINAR LA PARTIDA ACTUAL?</p>
+
+      <span>
+        Se conservarán los puntos, el tiempo jugado y el nivel alcanzado.
+      </span>
+
+      <div class="finish-game-confirmation-buttons">
+
+        <button id="finish-game-confirm-no">
+          NO
+        </button>
+
+        <button id="finish-game-confirm-yes">
+          SÍ
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
 <div id="help-container">
 
   <button

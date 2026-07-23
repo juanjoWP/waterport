@@ -10,6 +10,7 @@ const TimeManager = {
     totalElapsedTime: 0,
     intervalId: null,
 
+
     startLevel() {
 
         this.stop();
@@ -19,6 +20,7 @@ const TimeManager = {
         this.updateUI();
         this.resume();
     },
+
 
     resume() {
 
@@ -45,6 +47,7 @@ const TimeManager = {
         }, 1000);
     },
 
+
     stop() {
 
         if (this.intervalId !== null) {
@@ -54,6 +57,7 @@ const TimeManager = {
         }
     },
 
+
     addSeconds(seconds) {
 
         if (!GameState.is(GameState.PLAYING)) return;
@@ -61,16 +65,27 @@ const TimeManager = {
         this.remainingTime += seconds;
         this.updateUI();
     },
+        finishCurrentGame() {
+
+        this.stop();
+
+        this.remainingTime = 0;
+
+        this.updateUI();
+        this.handleTimeUp();
+    },
 
     getRemainingTime() {
 
         return this.remainingTime;
     },
 
+
     getTotalElapsedTime() {
 
         return this.totalElapsedTime;
     },
+
 
     resetGameTime() {
 
@@ -81,6 +96,7 @@ const TimeManager = {
 
         this.updateUI();
     },
+
 
     handleTimeUp() {
 
@@ -95,6 +111,14 @@ const TimeManager = {
 
         const finalTime =
             this.getTotalElapsedTime();
+
+        // El nivel actual quedó sin terminar.
+        // Guardamos el último nivel realmente completado.
+        const completedLevel =
+            Math.max(
+                0,
+                LevelManager.getCurrentLevel() - 1
+            );
 
         const entersScoreRecords =
             RecordManager.isHighScore(
@@ -127,7 +151,8 @@ const TimeManager = {
                 RecordEntry.open(
                     finalScore,
                     finalTime,
-                    true
+                    true,
+                    completedLevel
                 );
 
                 return;
@@ -148,6 +173,7 @@ const TimeManager = {
 
         }, 1500);
     },
+
 
     updateUI() {
 

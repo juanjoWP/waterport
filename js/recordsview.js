@@ -7,12 +7,18 @@ const RecordsView = {
 
     overlayElement: null,
     scoreListElement: null,
-    timeListElement: null,
+
     closeButtonElement: null,
+
     deleteButtonElement: null,
     confirmationElement: null,
     confirmYesElement: null,
     confirmNoElement: null,
+
+    finishButtonElement: null,
+    finishConfirmationElement: null,
+    finishConfirmYesElement: null,
+    finishConfirmNoElement: null,
 
     previousState: null,
 
@@ -24,9 +30,6 @@ const RecordsView = {
 
         this.scoreListElement =
             document.getElementById("score-records-list");
-
-        this.timeListElement =
-            document.getElementById("time-records-list");
 
         this.closeButtonElement =
             document.getElementById("records-close-button");
@@ -43,18 +46,33 @@ const RecordsView = {
         this.confirmNoElement =
             document.getElementById("records-confirm-no");
 
+        this.finishButtonElement =
+            document.getElementById("records-finish-button");
+
+        this.finishConfirmationElement =
+            document.getElementById("finish-game-confirmation");
+
+        this.finishConfirmYesElement =
+            document.getElementById("finish-game-confirm-yes");
+
+        this.finishConfirmNoElement =
+            document.getElementById("finish-game-confirm-no");
+
         const recordsButton =
             document.getElementById("records-button");
 
         if (
             !this.overlayElement ||
             !this.scoreListElement ||
-            !this.timeListElement ||
             !this.closeButtonElement ||
             !this.deleteButtonElement ||
             !this.confirmationElement ||
             !this.confirmYesElement ||
             !this.confirmNoElement ||
+            !this.finishButtonElement ||
+            !this.finishConfirmationElement ||
+            !this.finishConfirmYesElement ||
+            !this.finishConfirmNoElement ||
             !recordsButton
         ) {
             return;
@@ -66,7 +84,6 @@ const RecordsView = {
 
                 event.stopPropagation();
                 this.open();
-
             }
         );
 
@@ -76,7 +93,6 @@ const RecordsView = {
 
                 event.stopPropagation();
                 this.close();
-
             }
         );
 
@@ -86,7 +102,6 @@ const RecordsView = {
 
                 event.stopPropagation();
                 this.showDeleteConfirmation();
-
             }
         );
 
@@ -96,7 +111,6 @@ const RecordsView = {
 
                 event.stopPropagation();
                 this.hideDeleteConfirmation();
-
             }
         );
 
@@ -110,9 +124,42 @@ const RecordsView = {
 
                 this.hideDeleteConfirmation();
                 this.render();
-
             }
         );
+
+        this.finishButtonElement.addEventListener(
+            "click",
+            event => {
+
+                event.stopPropagation();
+                this.showFinishConfirmation();
+            }
+        );
+
+        this.finishConfirmNoElement.addEventListener(
+            "click",
+            event => {
+
+                event.stopPropagation();
+                this.hideFinishConfirmation();
+            }
+        );
+
+            this.finishConfirmYesElement.addEventListener(
+                "click",
+                event => {
+
+                    event.stopPropagation();
+
+                    this.hideFinishConfirmation();
+
+                    this.overlayElement.classList.remove(
+                        "records-window-visible"
+                    );
+
+                    TimeManager.finishCurrentGame();
+                }
+            );
 
         this.overlayElement.addEventListener(
             "click",
@@ -121,7 +168,6 @@ const RecordsView = {
                 if (event.target === this.overlayElement) {
                     this.close();
                 }
-
             }
         );
     },
@@ -129,45 +175,53 @@ const RecordsView = {
 
     open() {
 
-    if (!this.overlayElement) return;
+        if (!this.overlayElement) return;
 
-    this.previousState =
-        GameState.current;
+        this.previousState =
+            GameState.current;
 
-    GameState.set(
-        GameState.ENTERING_RECORD
-    );
+        GameState.set(
+            GameState.ENTERING_RECORD
+        );
 
-    PauseManager.pause();
-    TimeManager.stop();
+        PauseManager.pause();
+        TimeManager.stop();
 
-    this.hideDeleteConfirmation();
-    this.render();
+        this.hideDeleteConfirmation();
+        this.hideFinishConfirmation();
 
-    this.overlayElement.classList.add(
-        "records-window-visible"
-    );
-},
+        this.render();
+
+        this.overlayElement.classList.add(
+            "records-window-visible"
+        );
+    },
 
 
-close() {
+    close() {
 
-    if (!this.overlayElement) return;
+        if (!this.overlayElement) return;
 
-    this.hideDeleteConfirmation();
+        this.hideDeleteConfirmation();
+        this.hideFinishConfirmation();
 
-    this.overlayElement.classList.remove(
-        "records-window-visible"
-    );
-PauseManager.resume();
-TimeManager.resume();
-    GameState.set(
-        this.previousState ||
-        GameState.PLAYING
-    );
-},
+        this.overlayElement.classList.remove(
+            "records-window-visible"
+        );
+
+        PauseManager.resume();
+        TimeManager.resume();
+
+        GameState.set(
+            this.previousState ||
+            GameState.PLAYING
+        );
+    },
+
 
     showDeleteConfirmation() {
+
+        this.hideFinishConfirmation();
 
         this.confirmationElement.classList.add(
             "records-confirmation-visible"
@@ -183,10 +237,27 @@ TimeManager.resume();
     },
 
 
+    showFinishConfirmation() {
+
+        this.hideDeleteConfirmation();
+
+        this.finishConfirmationElement.classList.add(
+            "finish-game-confirmation-visible"
+        );
+    },
+
+
+    hideFinishConfirmation() {
+
+        this.finishConfirmationElement.classList.remove(
+            "finish-game-confirmation-visible"
+        );
+    },
+
+
     render() {
 
         this.renderScoreRecords();
-        this.renderTimeRecords();
     },
 
 
@@ -207,45 +278,21 @@ TimeManager.resume();
 
         records.forEach((record, index) => {
 
+            const level =
+                Math.max(
+                    0,
+                    Number(record.level) || 0
+                );
+
             const row =
                 this.createRecordRow(
                     index,
                     record.initials,
                     `${record.score} PUNTOS`,
-                    this.formatTime(record.time)
+                    `${this.formatTime(record.time)} · NIVEL ${level}`
                 );
 
             this.scoreListElement.appendChild(row);
-        });
-    },
-
-
-    renderTimeRecords() {
-
-        this.timeListElement.innerHTML = "";
-
-        const records =
-            RecordManager.records.times;
-
-        if (records.length === 0) {
-
-            this.timeListElement.innerHTML =
-                '<div class="records-empty">SIN RÉCORDS</div>';
-
-            return;
-        }
-
-        records.forEach((record, index) => {
-
-            const row =
-                this.createRecordRow(
-                    index,
-                    record.initials,
-                    this.formatTime(record.time),
-                    `${record.score} PUNTOS`
-                );
-
-            this.timeListElement.appendChild(row);
         });
     },
 
@@ -279,11 +326,17 @@ TimeManager.resume();
 
     formatTime(totalSeconds) {
 
+        const safeTotalSeconds =
+            Math.max(
+                0,
+                Number(totalSeconds) || 0
+            );
+
         const minutes =
-            Math.floor(totalSeconds / 60);
+            Math.floor(safeTotalSeconds / 60);
 
         const seconds =
-            totalSeconds % 60;
+            safeTotalSeconds % 60;
 
         return `${minutes}:${seconds
             .toString()

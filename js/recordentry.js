@@ -12,6 +12,8 @@ const RecordEntry = {
     pendingScore: 0,
     pendingTime: 0,
     pendingGameCompleted: false,
+    pendingLevel: 0,
+
 
     init() {
 
@@ -46,7 +48,6 @@ const RecordEntry = {
                         .toUpperCase()
                         .replace(/[^A-ZÑ]/g, "")
                         .slice(0, 3);
-
             }
         );
 
@@ -57,19 +58,19 @@ const RecordEntry = {
                 if (event.key === "Enter") {
                     this.confirm();
                 }
-
             }
         );
-
     },
 
-    open(score, time, gameCompleted) {
+
+    open(score, time, gameCompleted, level) {
 
         if (!this.overlayElement) return;
 
         this.pendingScore = score;
         this.pendingTime = time;
         this.pendingGameCompleted = gameCompleted;
+        this.pendingLevel = level;
 
         GameState.set(
             GameState.ENTERING_RECORD
@@ -81,11 +82,12 @@ const RecordEntry = {
             "record-entry-visible"
         );
 
-        setTimeout(() => {
-            this.inputElement.focus();
-        }, 100);
-
+        setTimeout(
+            () => this.inputElement.focus(),
+            100
+        );
     },
+
 
     confirm() {
 
@@ -93,6 +95,7 @@ const RecordEntry = {
             this.inputElement.value.trim();
 
         if (initials.length === 0) {
+
             this.inputElement.focus();
             return;
         }
@@ -101,7 +104,8 @@ const RecordEntry = {
             initials,
             this.pendingScore,
             this.pendingTime,
-            this.pendingGameCompleted
+            this.pendingGameCompleted,
+            this.pendingLevel
         );
 
         this.close();
@@ -115,8 +119,8 @@ const RecordEntry = {
             "level",
             1200
         );
-
     },
+
 
     close() {
 
@@ -127,7 +131,6 @@ const RecordEntry = {
         );
 
         this.inputElement.blur();
-
     }
 
 };

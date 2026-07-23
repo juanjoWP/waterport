@@ -6,7 +6,6 @@
 const RecordManager = {
 
     maximumScoreRecords: 5,
-    maximumTimeRecords: 3,
 
     records: {
         scores: [],
@@ -35,10 +34,9 @@ const RecordManager = {
                     ? parsedRecords.scores
                     : [];
 
-            this.records.times =
-                Array.isArray(parsedRecords.times)
-                    ? parsedRecords.times
-                    : [];
+            // Se conserva vacío por compatibilidad con
+            // archivos del juego que todavía lo consultan.
+            this.records.times = [];
 
             this.sortRecords();
 
@@ -70,11 +68,12 @@ const RecordManager = {
     // COMPROBACIÓN DE RÉCORDS
     // ===================================================
 
-    isHighScore(score, time) {
+    isHighScore(score, time, level = 0) {
 
         const candidate = {
-            score: score,
-            time: time
+            score: Number(score) || 0,
+            time: Number(time) || 0,
+            level: Number(level) || 0
         };
 
         const ranking = [
@@ -93,30 +92,16 @@ const RecordManager = {
     },
 
 
-    isBestTime(score, time, gameCompleted) {
+    /*
+        Se mantiene esta función para no romper las llamadas
+        antiguas de finishGame() y TimeManager.
 
-        if (!gameCompleted) {
-            return false;
-        }
+        Ya no existe una clasificación independiente
+        de mejores tiempos.
+    */
+    isBestTime() {
 
-        const candidate = {
-            score: score,
-            time: time
-        };
-
-        const ranking = [
-            ...this.records.times,
-            candidate
-        ];
-
-        ranking.sort(
-            this.compareTimeRecords
-        );
-
-        return (
-            ranking.indexOf(candidate) <
-            this.maximumTimeRecords
-        );
+        return false;
     },
 
 
@@ -124,43 +109,44 @@ const RecordManager = {
     // GUARDAR UNA PARTIDA
     // ===================================================
 
-    addRecord(initials, score, time, gameCompleted) {
+    addRecord(
+        initials,
+        score,
+        time,
+        gameCompleted,
+        level
+    ) {
 
         const cleanInitials =
             this.cleanInitials(initials);
 
-        const entersScoreList =
-            this.isHighScore(score, time);
+        const cleanScore =
+            Number(score) || 0;
 
-        const entersTimeList =
-            this.isBestTime(
-                score,
-                time,
-                gameCompleted
+        const cleanTime =
+            Number(time) || 0;
+
+        const cleanLevel =
+            Math.max(
+                0,
+                Number(level) || 0
+            );
+
+        const entersScoreList =
+            this.isHighScore(
+                cleanScore,
+                cleanTime,
+                cleanLevel
             );
 
         if (entersScoreList) {
 
             this.records.scores.push({
                 initials: cleanInitials,
-                score: score,
-                time: time
+                score: cleanScore,
+                time: cleanTime,
+                level: cleanLevel
             });
-        }
-
-        if (entersTimeList) {
-
-            this.records.times.push({
-                initials: cleanInitials,
-                score: score,
-                time: time
-            });
-        }
-
-        if (
-            entersScoreList ||
-            entersTimeList
-        ) {
 
             this.sortRecords();
             this.save();
@@ -168,7 +154,7 @@ const RecordManager = {
 
         return {
             highScore: entersScoreList,
-            bestTime: entersTimeList
+            bestTime: false
         };
     },
 
@@ -186,26 +172,38 @@ const RecordManager = {
 
 
     // ===================================================
-    // ORDEN DE LAS CLASIFICACIONES
+    // ORDEN DE LA CLASIFICACIÓN
     // ===================================================
 
     compareScoreRecords(recordA, recordB) {
 
-        if (recordB.score !== recordA.score) {
-            return recordB.score - recordA.score;
+        const scoreA =
+            Number(recordA.score) || 0;
+
+        const scoreB =
+            Number(recordB.score) || 0;
+
+        if (scoreB !== scoreA) {
+            return scoreB - scoreA;
         }
 
-        return recordA.time - recordB.time;
-    },
+        const levelA =
+            Number(recordA.level) || 0;
 
+        const levelB =
+            Number(recordB.level) || 0;
 
-    compareTimeRecords(recordA, recordB) {
-
-        if (recordA.time !== recordB.time) {
-            return recordA.time - recordB.time;
+        if (levelB !== levelA) {
+            return levelB - levelA;
         }
 
-        return recordB.score - recordA.score;
+        const timeA =
+            Number(recordA.time) || 0;
+
+        const timeB =
+            Number(recordB.time) || 0;
+
+        return timeA - timeB;
     },
 
 
@@ -215,21 +213,13 @@ const RecordManager = {
             this.compareScoreRecords
         );
 
-        this.records.times.sort(
-            this.compareTimeRecords
-        );
-
         this.records.scores =
             this.records.scores.slice(
                 0,
                 this.maximumScoreRecords
             );
 
-        this.records.times =
-            this.records.times.slice(
-                0,
-                this.maximumTimeRecords
-            );
+        this.records.times = [];
     },
 
 

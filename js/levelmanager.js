@@ -304,7 +304,7 @@ function completeLevel() {
 
         levelTransitionInProgress = false;
 
-    }, 1000);
+    }, 2000);
 
 }
 
@@ -320,6 +320,9 @@ function finishGame() {
 
     const finalTime =
         TimeManager.getTotalElapsedTime();
+
+    const completedLevel =
+        LevelManager.getCurrentLevel();
 
     const entersScoreRecords =
         RecordManager.isHighScore(
@@ -344,7 +347,8 @@ function finishGame() {
         RecordEntry.open(
             finalScore,
             finalTime,
-            true
+            true,
+            completedLevel
         );
 
         return;
